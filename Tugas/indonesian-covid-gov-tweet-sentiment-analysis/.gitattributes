@@ -1,2 +1,1 @@
-# Linguist overrides
-dist/* linguist-vendored=false
+*.Rmd linguist-detectable
