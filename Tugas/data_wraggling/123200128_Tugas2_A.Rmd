@@ -1,0 +1,136 @@
+---
+title: "Tugas 2 Praktikum DS IF-A"
+author: "Rifqi Maulana_123200128"
+date: "2022-11-06"
+output: pdf_document
+---
+
+```{r setup, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Tugas 2
+## Instruksi
+1. Kerjakan soal-soal yang ada! Jangan lupa tulis NAMA dan NIM pada author!
+2. Jawablah dengan mengisi chunk dibawah soal!
+3. Export hasil pekerjaan dalam format PDF/Word
+4. Simpan file dengan format : nim_Tugas2_A
+                          ex : 123180062_Tugas2_A.pdf
+5. Upload file .Rmd, .pdf dan gambar yg disimpan ke GDrive dan kumpulkan link yg dapat diakses ke SPADA
+
+##Soal
+1. Load library apa saja yang kira-kira digunakan! **2 poin**
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(vroom)
+library(here)
+```
+
+2. Load dataset "Data Jumlah Penduduk Berdasarkan Kewarganegaraan dan Jenis Kelamin 2020" dan tampilkan struktur dataset tersebut! **4 poin**
+```{r}
+data_penduduk <- vroom(here("data-jumlah-penduduk-berdasarkan-kewarganegaraan-dan-jenis-kelamin-tahun-2020.csv"))
+data_penduduk
+```
+
+3. Hapus kolom tahun dan nama provinsi! **5 poin**
+```{r}
+data_penduduk2 = data_penduduk[,-1:-2]
+data_penduduk2
+```
+
+4. Pisahkan data WNI laki-laki dan perempuan! Gabungkan kedua data tersebut berdasarkan kelurahannya! **15 poin**
+```{r}
+wni_laki<-filter(data_penduduk2, jenis_kelamin == 'Laki-Laki') 
+wni_perempuan<-filter(data_penduduk2, jenis_kelamin == 'Perempuan')
+data_gabungan<-full_join(wni_laki,wni_perempuan, by ="nama_kelurahan")
+data_gabungan
+```
+
+5. Rapikan data gabungan sehingga hanya ada 1 kolom kabupate/kota, kecamatan, kelurahan, kewarganegaraan, serta 2 kolom jumlah penduduk berdasarkan jenis kelamin! 
+   Ubah nama kolom menjadi : kabupaten_kota, kecamatan, kelurahan, kewarganegaraan, jumlah_laki, jumlah_perempuan sehingga lebih mudah dibaca! **20 poin**
+```{r}
+new_data <-data_gabungan%>%
+  select('nama_kabupaten/kota.x','nama_kecamatan.x','nama_kelurahan','kewarganegaraan.x',
+         'jenis_kelamin.x','jumlah.x','jenis_kelamin.y','jumlah.y')
+new_data <- new_data %>%
+  rename('kabupaten_kota' = 'nama_kabupaten/kota.x', 'kecamatan'='nama_kecamatan.x', 'kelurahan'= 'nama_kelurahan', 
+         'jumlah_laki'= 'jumlah.x', 'jumlah_perempuan' = 'jumlah.y')
+new_data
+```
+
+6. Kelompokan data tersebut berdasarkan kecamatan dan lakukan penjumlahan sehingga jumlah penduduk laki-laki dan perempuan tergabung untuk masing-masing kecamatan! Ket kolom : kecamatan, total_laki, total_perempuan **10 poin**
+```{r}
+total_laki = aggregate(new_data$jumlah_laki,list(new_data$kecamatan), FUN = sum)
+total_perempuan = aggregate(new_data$jumlah_perempuan,list(new_data$kecamatan), FUN = sum)
+total_kecamatan = inner_join(total_laki,total_perempuan, by = "Group.1")
+total_kecamatan = rename(total_kecamatan, 'kecamatan'='Group.1','total_laki' = 'x.x', 'total_perempuan'= 'x.y')
+total_kecamatan
+```
+
+7. Buatlah diagram pie menggunakan data laki-laki pada nomor 6. seperti contoh yg diberikan pada gambar 1. **15 poin**
+```{r}
+ypos = cumsum(total_kecamatan$total_laki/100000) - (1/2) * (total_kecamatan$total_laki/100000)
+ypos = 100 - ypos 
+l <- ggplot() + theme_bw() + 
+  geom_bar(aes(x = "", y =total_kecamatan$total_laki/100000, fill = total_kecamatan$kecamatan), 
+           width = 0.2, stat = "identity", color = "white") + 
+  coord_polar(theta = "y") + 
+   theme(plot.title = element_text(hjust = 0.5, size =10), legend.key.size = unit(0.2, "cm")) + 
+   theme(legend.text = element_text(size = 5, colour = "black"))+
+  labs(title="Diagram Pie Penduduk Laki-Laki di Jakarta", 
+       x=" ",
+       y= "Total Laki-Laki (satuan jutaan)")+
+   guides(fill=guide_legend(title="Daftar Kecamatan")) + 
+   geom_text(aes(x = "", y =ypos, label = paste0(total_kecamatan$total_laki/100000, "%")), size = 1)
+l
+```
+
+8. Lakukan hal yang sama untuk data perempuan! seperti contoh gambar 2. **7 poin**
+```{r}
+ypos = cumsum(total_kecamatan$total_perempuan/100000) - (1/2) * (total_kecamatan$total_perempuan/100000)
+ypos =  100- ypos 
+p <- ggplot() + theme_bw() + 
+  geom_bar(aes(x = "", y =total_kecamatan$total_perempuan/100000, fill = total_kecamatan$kecamatan), 
+           width = 0.1, stat = "identity", color = "white") + 
+  coord_polar(theta = "y") + 
+   theme(plot.title = element_text(hjust = 0.5, size =10),legend.key.size = unit(0.2, "cm")) + 
+   theme(legend.text = element_text(size = 5, colour = "black"))+
+  labs(title="Diagram Pie Penduduk Perempuan di Jakarta", 
+       x=" ",
+       y= "Total Perempuan (satuan jutaan)")+
+   guides(fill=guide_legend(title="Daftar Kecamatan")) + 
+   geom_text(aes(x = "", y = ypos, label = paste0(total_kecamatan$total_perempuan/100000, "%")), size = 1)
+       
+p
+```
+
+9. Dengan menggunakan dataset asli, ambil data kewarganegaraan WNI dan kelompokan data berdasarkan kecamatan serta lakuakn penjumlahan sehingga jumlah penduduk terkumpul berdasarkan kecamatan. **8 poin**
+```{r}
+wni_kec = filter(data_penduduk, kewarganegaraan == 'WNI')
+wni_kec = aggregate(wni_kec$jumlah,
+                    list(wni_kec$nama_kecamatan), FUN = sum)
+wni_kec
+```
+
+10. Menggunakan data nomor 9, buatlah visualisasi data seperti contoh gambar 3! **10 poin**
+```{r}
+k <- ggplot(wni_kec,aes(x/1000,Group.1)) +
+  geom_bar( stat = "identity", fill = rainbow(n =length(wni_kec$Group.1)))
+k <- k +
+  labs(title = "Jumlah Kependudukan di Jakarta tahun 2020",
+       subtitle = "Jumlah Penduduk WNI berdasarkan Kecamatan",
+       y = "Nama Kecamatan",
+       x= "Jumlah penduduk (satuan ribuan)")
+k
+```
+
+11. Simpan seluruh visualisasi ke dalam bentuk gambar (jpg/png) **4 poin**
+```{r}
+ggsave(filename = "l.jpeg", plot = l)
+ggsave(filename = "p.jpeg", plot = p)
+ggsave(filename = "k.jpeg", plot = k)
+```
+
+

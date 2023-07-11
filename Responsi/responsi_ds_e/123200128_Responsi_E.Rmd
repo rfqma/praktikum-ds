@@ -1,0 +1,343 @@
+---
+title: "Responsi Praktikum DS IF-E"
+author: "Rifqi Maulana_123200128"
+date: "2022-12-08"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Responsi
+## Instruksi
+1. Kerjakan soal-soal yang ada! Jangan lupa **tulis NAMA dan NIM pada author**!
+2. Jawablah dengan mengisi chunk dibawah soal!
+3. Export hasil pekerjaan dalam format **PDF/Word**
+4. Simpan file dengan format : **nim_Responsi_E**
+                          ex : 123190046_Responsi_E
+5. Upload file .Rmd, .pdf dan gambar yg disimpan ke GDrive dan kumpulkan link yg dapat diakses ke SPADA
+
+# SOAL
+1. Load library apa saja yang kira-kira digunakan! **(2 poin)**
+```{r}
+library(tidyverse)
+library(vroom)
+library(here)
+```
+## Kasus 1
+2. Load dataset "Mobilephone_prices.csv" dan tampilkan struktur dataset tersebut! **(3 poin)**
+```{r}
+mobPhonePrices <- vroom(here("Mobilephone_prices.csv"))
+```
+
+3. Tampilkan 10 Top "Phone Sales" data berdasarkan Y_Shopping_sales dari brand "APPLE" secara urut dari yang terbesar. Yang ditampilkan hanya Phone_brand, Phone_name, dan Y_Shopping_sales. **(5 poin)**
+-------------------------------------------
+```{r}
+mobPhonePrices %>% 
+  arrange(desc(Y_Shopping_sales)) %>%
+  filter(Phone_brand == "APPLE" ) %>%
+  select(Phone_brand, Phone_name, Y_Shopping_sales) %>%
+  head(10)
+```
+
+4. Buatlah dataframe baru yang berisikan data brand dan rata-rata penjualannya dengan menggunakan fungsi buatan! Tampilkan dataframe baru tersebut! **(15 poin)**
+```{r}
+#fungsi untuk menghitung rata-rata
+# rata <- function(dt){
+#   x <- dt %>% count(Phone_brand)
+#   sums <- dt %>% summarize(total = mean(Y_Shopping_Sales))
+#   ratas <- sums / x
+#   return(ratas)
+# }
+
+# untuk mengecek data yang unik dari kolom Phone_brand
+# data <- unique(mobPhonePrices, Phone_brand)
+
+# untuk menghitung banyaknya data unik diatas 
+# n <- nrow(data)
+
+# inisialisasi array (tidak perlu diisi lagi)
+# brand = array()
+# rata2 = array()
+
+# perulangan untuk membuat data rata-rata dari masing-masing platform dengan fungsi yang sudah dibuat sebelumnya
+# for (i in 1:n){
+#   new_data <- phone_sales %>%
+#     filter(rata2 == data$rata[i])
+#   brand[i] <- data$rata2[i]
+#   rata2[i] <- rata(new_data)
+  
+# }
+
+# membuat dataframe baru yang berisikan brand dan hasil perhitungan rata-rata
+# df <- data.frame("Brand" = brand[i], "Rata_Rata" = rata2[i])
+
+# tampilkan dataframe baru
+# df
+```
+
+5. Gunakan data pada nomor 4 untuk menambahkan kolom baru dengan nama Penjualan dengan ketentuan : 
+      a. Rata-rata lebih dari 20 maka Penjualan akan bernilai "Sangat Baik"
+      b. Rata-rata lebih dari 10 maka Penjualan akan bernilai "Baik"
+      c. Rata-rata lebih dari 5 maka Penjualan akan bernilai "Cukup Baik"
+      d. Rata-rata kurang dari 5 maka Penjualan akan bernilai "Kurang Baik"
+
+Kemudian tampilkan hasilnya! **(5 poin)**
+```{r}
+# df <- df %>%
+#   mutate(Penjualan = ____)
+# df
+```
+
+6. Buatlah diagram pie dengan menggunakan data pada nomor 5, 
+    a. isi pie berdasarkan data rata-rata penjualan
+    b. warna berdasarkan kolom Penjualan
+
+seperti contoh gambar 1! **(10 poin)**
+```{r}
+# pie_dg <- df %>%
+#   ggplot(aes(x = ___, y = ____, fill = ____)) + 
+#   ___(stat = "identity", width = 0.5, color = "white") +
+#   ___("y", start = 0) +
+#   labs(
+#     x = "",
+#     y = "Penjualan Ponsel",
+#     title = "Rata-rata Penjualan Ponsel",
+#     subtitle = "Berdasarkan Brand",
+#     fill = "Daftar Kualitas Penjualan",
+#   ) +
+#   geom_text(aes(label = paste0(round(____*10), "%")), position = position_stack(vjust = 0.5), size = 2)
+
+# pie_dg
+```
+7. Dengan menggunakan dataset asli, buatlah perhintungan rata-rata penjualan berdasarkan kategori ponsel dengan nama kolom *Rata_Penjualan* dan total penjualan per tahun dengan nama kolom *Total_Penjualan*! **(5 poin)**
+```{r}
+df2 <- mobPhonePrices %>%
+  group_by(Phone_category) %>%
+  summarize(Rata_Penjualan = mean(Y_Shopping_sales), Total_Penjualan = mean(Y_Caala_sales))
+df2
+```
+
+8. Gunakan data pada nomor 7 untuk menambahkan kolom baru dengan nama Rate_Rata_Penjualan dengan ketentuan : 
+      a. Rata-rata lebih dari 20 maka Rate_Rata_Penjualan akan bernilai "Terlampau Baik"
+      b. Rata-rata lebih dari 10 maka Rate_Rata_Penjualan akan bernilai "Baik"
+      c. Rata-rata kurang dari 10 maka Rate_Rata_Penjualan akan bernilai "Cukup Baik"
+
+Kemudian tampilkan hasilnya! **(5 poin)**
+```{r}
+# kondisi <- function(kondisi){
+#   if(Rata_Penjualan > 20) {
+#     return("Terlampau Baik")
+#   } else if (Rata_Penjualan > 10 && Rata_Penjualan <= 20) {
+#     return("Baik")
+#   } else if (Rata_Penjualan < 10) {
+#     return("Cukup Baik")
+#   }
+# }
+
+# df2 <- df2 %>%
+#   mutate(Rate_Rata_Penjualan = kondisi)
+# df2
+```
+
+9. Buatlah diagram bar dengan menggunakan data pada nomor 7, 
+    a. x adalah Kategori
+    b. y adalah Total Penjualan
+    c. warna berdasarkan Kategori
+
+seperti contoh gambar 2! **(10 poin)**
+```{r}
+# ___ = as.factor(____)
+
+# bar_dg <- ___ %>%
+#   ggplot(aes(x = ___, y = ___, fill = ___)) + 
+#   ___(stat = "identity") +
+#   ___() +
+#   labs(
+#     x = "Kategori",
+#     y = "Total Penjualan Ponsel",
+#     title = "Total penjualan Ponsel Berdasarkan Kategori",
+#     subtitle = "Antara Smartphone dan Basic Phone",
+#     fill = "Kategori"
+#   ) 
+  
+
+# bar_dg
+```
+
+## Kasus 2
+10. Buatlah dataframe baru dengan ketentuan : 
+    a. terdapat 4 kolom : Tipe, Tahun, Hardware, Skor
+    b. Tipe : Poco X3 Pro, Realme GT Master, IPhone 12 Pro Max
+    c. Tahun : 2021, 2021, 2020
+    d. Hardware : CPU, GPU
+    e. Antutu_Benchmark : 149529, 209484, 161771, 157611, 194470, 278436
+
+Masing masing tipe smartphone akan memiliki hardware CPU dan GPU dengan skor antutu benchmark sesuai urutan yang diberikan! **(10 poin)**
+    
+```{r}
+# daftar data sesuai contoh
+# pemain <- c(___)
+# tahun <- c(___)
+# keahlian <- c(___)
+# poin <- c(___)
+
+# pembuatan dataframe kosong
+# df3 <- data.frame(___ = character(0), ___ = character(0), ___ = character(0), ___ = integer(0))
+# kk = ___
+
+# perulangan untuk menggabungkan dataframe kosong dengan dataframe isi
+# for(i in 1:___){
+#   for(j in 1:___){
+#     nt <- data.frame(___ = ___[i], ___ = ___[i], ___ =___[j], ___ = ___[kk])
+#     df3 <- ___(df3, nt)
+#     kk <- kk + 1
+#   }
+# }
+
+#tampilkan dataframe baru
+# df3
+```
+
+11. Ubah data nomor 10 dari data kolom menjadi data baris dengan kuncinya adalah kolom hardware dan data antutu benchmark akan masuk ke dalam kolom baru , sehingga kolom dari data tersebut berubah menjadi: **(5 poin)**
+
+| Tipe | Tahun | CPU | GPU |
+--------------------------------
+```{r}
+# df_wide <- ___(___, key = ___, value = ___)
+# df_wide
+```
+
+## Kasus 3
+12. Load dataset "player.csv" dan "community.csv" dan tampilkan glimpse kedua dataset tersebut! **(2 poin)**
+```{r}
+player <- vroom(here("player.csv"))
+community <- vroom(here("community.csv"))
+glimpse(player)
+glimpse(community)
+```
+13. Sama seperti soal nomor 11, ubahlah data player pada nomor 12 menjadi data baris dengan stats menjadi kuncinya! **(5 poin)**
+```{r}
+# dfChange <- ___(___, key = ___, value = ___)
+# dfChange
+```
+14. Dengan data nomor 13, tampilkan 10 top data berdasarkan dribbles dan passing urut dari yang terbesar! **(5 poin)**
+```{r}
+# dfChange %>% 
+#   arrange(desc(Stats)) %>%
+#   filter(Stats == "dribbles", Stats == "passing" ) %>%
+#   select(Name, Stats, Point) %>%
+#   head(10)
+```
+
+15. Dengan menggunakan data nomor 13, tampilkan 10 Top player data berdasarkan shots pada tahun 2017 secara urut dari yang terbesar. Yang ditampilkan hanya Name, Year, shots. **(5 poin)**
+
+| Name | Year | shots |
+-----------------------
+```{r}
+#
+```
+16. Tampilkan data jumlah pemain dari tiap tahunnya dengan menggunakan data nomor 13! **(5 poin)**
+```{r}
+# data <- ___ %>%
+#    group_by(___) %>%
+#    summarise(___ = n())
+# data
+```
+
+17. Tampilkan seluruh data community yang berasal dari sekolah "Winterville University" dan urutkan berdasarkan usia dari yang tertua! **(5 poin)**
+```{r}
+community %>% 
+  arrange(desc(Age)) %>%
+  filter(School == "Winterville University" ) %>%
+  select(Name, Age, School, Height, Continent)
+```
+18. Tampilkan seluruh data community yang berasal dari benua "South America" dan urutkan berdasarkan nama sekolah dari huruf A dan tinggi badan dari yang tertinggi dan tampilkan Name, School, Height, Continent!  **(5 poin)**
+
+| Name | School | Height | Continent |
+-------------------------------------
+```{r}
+community %>% 
+  arrange(School, desc(Height)) %>%
+  filter(Continent == "South America" ) %>%
+  select(Name, School, Height, Continent)
+```
+
+19. Tampilkan data jumlah community dari tiap benua! **(5 poin)**
+```{r}
+# community %>% 
+#  select(Continent) %>%
+#  mutate(jumlah_community = count(Name))
+```
+20. Gabungkan data community dan data wide player yang memiliki identitas yang sama! **(5 poin)**
+```{r}
+data_gabungan <- merge(community, player, by = "Name")
+data_gabungan
+```
+21. Gunakan data 20 dan buat kolom dengan nama Mean_Stats yang berisikan rata-rata dari dribbles, interceptions, passing, shots, tackles sehingga tabel dataframe berisikan Name, Age, School, Height, Continent, Year, Mean_Stats! **(5 poin)**
+```{r}
+# new_df <- ___[, c(1:___)]
+# new_df$___ <- rowMeans(___[, c(7:___)])
+
+# new_df
+```
+
+22. Buatlah diagram bar dengan menggunakan data pada nomor 21, 
+    a. x adalah Nama
+    b. y adalah Mean_Stats
+    c. warna menggunakan Mean_Stats
+
+seperti contoh gambar 5! **(10 poin)**
+
+```{r}
+# df2$Year = as.factor(df2$Year)
+
+# bar_dg2 <- ___ %>%
+#  ggplot(aes(x = ___, y = ___, fill = ___)) + 
+#  ___(stat = "identity") +
+#  ___() +
+#  labs(
+#    x = "Nama",
+#    y = "Rata - Rata Keahlian",
+#    title = "Rata - Rata Keahlian Pemain Sepakbola",
+#  ) 
+  
+
+# bar_dg2
+```
+23. Gabungkan data community dan data wide player yang memiliki identitas yang sama namun hanya tampilkan data dari wide player! **(5 poin)**
+
+NB : menggunakan 1 baris perintah
+```{r}
+data_gabungan %>% select(Name, Year, Stats, Point)
+```
+
+24. Gabungkan data community dan data wide player namun bukan data yang beririsan dan hanya tampilkan data dari community! **(5 poin)**
+
+NB : menggunakan 1 baris perintah
+```{r}
+data_gabungan %>% select(Name, Age, Height, School, Continent)
+```
+25. Simpan semua plot menjadi gambar (soal nomor: 6, 9, dan 22) **(3 poin)**
+```{r}
+#
+```
+
+### SELESAI~~~
+Terimakasih telah mengikuti praktikum dari awal hingga akhir! 
+
+Kami selaku aslab ingin meminta maaf untuk semua kesalahan kami selama praktikum dari awal hingga akhir. Serta kekurangan kami dalam menyampaikan materi. Sampai jumpa dilain kesempatan. Semoga selalu diberikan kesehatan untuk kita semua~
+
+Bagi yang berkenan dapat memberikan kesan dan pesan kepada kami aslab pada kolom dibawah:
+
+#### Kesan
+
+<Isi_kesan>
+
+#### Pesan
+
+<Isi_pesan>
+
+
+

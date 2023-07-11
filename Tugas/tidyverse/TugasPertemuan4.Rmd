@@ -1,0 +1,76 @@
+---
+title: "TugasPertemuan4"
+author: "Rifqi Maulana"
+date: "2022-09-30"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# TUGAS DI MODUL HALAMAN 47
+
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+# 1
+library(formatR)
+
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+data(murders)
+murders %>% mutate(murders, rate = total/population*100000)
+```
+
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+# 2
+library(formatR)
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+data(murders)
+murders %>% arrange(desc(total)) %>% mutate(rank = rank(desc(total)))
+```
+
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+# 3
+library(formatR)
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+data(murders)
+murders %>% select(state, abb)
+```
+
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+# 4
+# Apakah ada cara yang lebih singkat tanpa mengetahui/memfilter dengan membaca rate-nya terlebih dahulu?
+library(formatR)
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+data(murders)
+murders %>% mutate(murders, rate = total/population*100000) %>% filter(rate >=4.4)
+```
+
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+# 5
+library(formatR)
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+data(murders)
+murders %>% mutate(murders, rate = total/population*100000, rank = rank(desc(rate))) %>% filter(rate < 1) %>% filter(region == "Northeast" | region == "West") %>% select(state, rate, rank) %>% arrange(rate) %>% mutate(rank = rank(rate))
+```
+
+
+```{r, tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+# 6
+library(formatR)
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+data(murders)
+my_states <- murders %>% mutate(rate = total/population*100000) %>% filter(rate < 1) %>% filter(region == "Northeast" | region == "Eastwest") %>% select(state, region, rate) %>% arrange(rate)
+my_states
+```

@@ -1,0 +1,116 @@
+---
+title: "Kuis_DS_E"
+author: "123200128/Rifqi Maulana"
+date: "2022-10-04"
+output:
+  pdf_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Intro
+##Baca Petunjuk Terlebih Dahulu!
+
+1. Kerjakan soal-soal yang ada! Jangan lupa tulis NAMA dan NIM pada author dan rename RMarkdown ini!
+2. Jawablah dengan mengisi chunk dibawah soal!
+3. Durasi pengerjaan selama 2 jam + 5 menit submit.
+4. Tidak ada toleransi telat submit.
+5. Export hasil pekerjaan dalam format PDF/Word & format pengumpulan NIM_NAMA_KUIS.pdf 
+
+1. Load library apa saja yang diperlukan! Lalu gunakan data bernama 'us_contagious_diseases'! **point 2**
+```{r}
+library(dslabs)
+library(dplyr)
+library(tidyverse)
+
+data("us_contagious_diseases")
+```
+
+2. Tampilkan semua nama kolom/variabel pada data frame tersebut! dan panjang dari vektor variabel 'state' **point 7**
+```{r}
+names(us_contagious_diseases)
+length(us_contagious_diseases$state)
+
+
+```
+
+3. Tampilkan tipe data dari variabel/kolom penyakit dan tampilkan kategori apa saja yang dimiliki variabel/kolom penyakit **point 7**
+```{r}
+class(us_contagious_diseases$disease) 
+levels(us_contagious_diseases$disease)
+
+```
+
+4. Tampilkan 10 data penyakit rubella teratas diurutkan berdasarkan jumlah kasusnya terbesar ke terkecil yang terjadi antara tahun 2000 dan 2005! **point 13**
+```{r}
+A <- us_contagious_diseases %>% select(disease, state, count, year) %>% filter(disease == "Rubella", year >= 2000, year <= 2005) %>% arrange(desc(count)) 
+head(A, 10)
+
+```
+
+5. Klasifikasikan data tersebut berdasarkan jumlah kasusnya dengan kondisi:
+-jumlah kasus kurang dari 500 dikategorikan sebagai "Biasa"
+-jumlah kasus lebih dari 2000 dikategorikan sebagai "Azab"
+-jumlah kasus antara kedua kondisi diatas dikategorikan sebagai "Cobaan"
+
+Masukkan ke suatu objek baru bernama 'category' **point 15**
+
+```{r}
+datanw <- us_contagious_diseases
+Biasa = datanw %>% filter(count<500)
+
+
+datanw <- us_contagious_diseases
+Azab = datanw %>% filter(count>2000)
+
+
+datanw <- us_contagious_diseases
+Cobaan = datanw %>% filter(count>=500, count <=2000)
+
+
+```
+
+6. Tambahkan variabel baru berisi data 'us_contagious_diseases' dengan tambahan kolom baru dengan nama "category" yang isinya merupakan data dari objek yang dibuat pada soal nomor 5. Tampilkan 5 data teratas berdasarkan penyakit "Polio" dan kategori "azab"! **point 13**
+```{r}
+#datanw <- us_contagious_diseases 
+#z <- datanw %>% mutate(datanw, category = if else(count<500, "Biasa", if else(count >2000, "Azab", "Cobaan"))) %>%
+ #select(disease, state, year, weeks_reporting, count, population) %>% 
+  #filter(disease == "Polio", category == "Azab") %>%
+  #head(z, 5)
+#mas iki bener tp eror
+
+```
+
+7. Tampilkan rata-rata dan standar deviasi dari jumlah kasus penyakit "Smallpox" di negara bagian "Iowa"! **point 10**
+```{r}
+D <- us_contagious_diseases %>% 
+  filter(disease == "Smallpox", state == "Iowa") %>% 
+  summarise(average = mean(count), standar_deviasi = sd(count))
+D
+
+```
+
+8. Tambahkan variabel baru "rate" yang isinya merupakan hasil bagi jumlah kasus dengan populasi dikalikan 100000! Kelompokkan berdasarkan negara bagian, lalu tampilkan kesimpulan data berupa rata-rata dan standar deviasi-nya **point 15**
+```{r}
+data1 <- us_contagious_diseases
+C <- data1 <- mutate(us_contagious_diseases, rate = count/ population * 100000)
+C %>% group_by(state) %>% summarise(average = mean(rate), standar_deviasi = sd(rate))
+
+
+```
+
+9. Tampilkan sepuluh data penyakit yang terjadi pada tahun 1991 diurutkan berdasarkan "population" dan "rate" dari kecil ke besar! **point 10**
+```{r}
+B<- us_contagious_diseases  %>% filter(year == 1991) %>% arrange(population)
+head(B ,10)
+```
+
+
+10. Lakukan visualisasi dengan plot pada hasil nomor 7! **point 8**
+```{r}
+#plot(C)
+
+```

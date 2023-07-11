@@ -1,0 +1,210 @@
+---
+title: "Tidyverse"
+author: "Rifqi Maulana"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+
+
+
+## Pertemuan 4 (Tidyverse) Modul 6
+
+
+## Memanipulasi Data Frame
+
+```{r}
+# Mutate
+library(tidyverse)
+library(dslabs)
+library(dplyr)
+data("murders")
+hasil_mutate <- mutate(murders, rate = total/population *100000, rate2 = total/population)
+hasil_mutate
+```
+
+```{r}
+# Filter
+library(tidyverse)
+library(dslabs)
+library(dplyr)
+data("murders")
+hasil_filter <- filter(hasil_mutate, rate <= 0.71)
+hasil_filter
+hasil_filter <- filter(hasil_mutate, rate <= 0.71 & total < 20)
+hasil_filter
+hasil_filter <- filter(hasil_mutate, region == 'west')
+hasil_filter
+```
+
+```{r}
+# Select
+library(tidyverse)
+library(dslabs)
+library(dplyr)
+data("murders")
+hasil_select <- select(hasil_mutate, state, population, rate)
+hasil_select
+```
+
+```{r}
+library(tidyverse)
+library(dslabs)
+library(dplyr)
+data("murders")
+# Pipe
+hasil_mutate %>% select(state, population, rate) %>% filter(rate <= 0.71)
+```
+
+## Menyimpulkan Data
+
+```{r}
+# Summarize
+library(tidyverse)
+library(dslabs)
+library(dplyr)
+data("heights")
+heights %>% filter(sex == 'Male') %>% summarize(average = mean(height), standard_dev = sd(height), total = sum(height))
+```
+
+```{r}
+# Group-by
+library(tidyverse)
+library(dslabs)
+library(dplyr)
+data("heights")
+heights %>% group_by(sex) %>% summarize(average = mean(height))
+```
+
+## Sorting Data Frames
+
+```{r}
+# Nested Sorting
+library(tidyverse)
+library(dslabs)
+library(dplyr)
+data("murders")
+murders %>% arrange(total, desc(population))
+```
+
+```{r}
+# Top N
+library(tidyverse)
+library(dslabs)
+library(dplyr)
+data("murders")
+murders %>% top_n(5, total)
+### top_n(murders, 6, total)
+```
+
+Tugas/Latihan
+
+```{r}
+#Admissions
+
+data(admissions)
+
+admissions %>% filter(gender == 'men') %>% mutate(chance = admitted/applicants *100) %>% summarize(max_chance = max(chance))
+
+
+# Filter gender cowok saja
+# Bikin kolom baru namanya 'chance' rumusnya 'admitted/applicants x 100'
+
+# Dikelompokkan berdasarkan gender
+# Tampilkan chance tertingginya dengan summarize
+
+# Wajib dengan satu pipe
+```
+
+# TUGAS DI MODUL HALAMAN 47
+
+```{r}
+# 1
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+data(murders)
+murders %>% mutate(murders, rate = total/population*100000)
+```
+
+```{r}
+# 2
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+data(murders)
+murders %>% arrange(desc(total)) %>% mutate(rank = rank(desc(total)))
+```
+
+```{r}
+# 3
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+data(murders)
+murders %>% select(state, abb)
+```
+
+```{r}
+# 4
+# Apakah ada cara yang lebih singkat tanpa mengetahui/memfilter dengan membaca rate-nya terlebih dahulu?
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+data(murders)
+murders %>% mutate(murders, rate = total/population*100000) %>% filter(rate >=4.4)
+```
+
+```{r}
+# 5
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+data(murders)
+murders %>% mutate(murders, rate = total/population*100000, rank = rank(desc(rate))) %>% filter(rate < 1) %>% filter(region == "Northeast" | region == "West") %>% select(state, rate, rank) %>% arrange(rate) %>% mutate(rank = rank(rate))
+```
+
+
+```{r}
+# 6
+library(tidyverse)
+library(dplyr)
+library(dslabs)
+data(murders)
+my_states <- murders %>% mutate(rate = total/population*100000) %>% filter(rate < 1) %>% filter(region == "Northeast" | region == "West") %>% select(state, rate) %>% arrange(rate) %>% mutate(rank = rank(rate))
+my_states
+```
+
+
+
+
+
+
+
+
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
